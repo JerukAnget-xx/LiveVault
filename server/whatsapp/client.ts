@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { getWhatsAppEnv, type WhatsAppEnv } from '@/lib/env';
 
-import { whatsappError } from './errors';
+import { requireWhatsAppConfiguration, whatsappError } from './errors';
 import { buildTemplateMessagePayload } from './report-message';
 import type { MetaWhatsAppClient, StoredReportImage } from './types';
 
@@ -127,11 +127,6 @@ export function createMetaWhatsAppClient({
 }
 
 export function getMetaWhatsAppClient() {
-  let env: WhatsAppEnv;
-  try {
-    env = getWhatsAppEnv();
-  } catch {
-    throw whatsappError('WHATSAPP_NOT_CONFIGURED');
-  }
+  const env = requireWhatsAppConfiguration(getWhatsAppEnv);
   return createMetaWhatsAppClient({ env });
 }

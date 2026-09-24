@@ -41,3 +41,11 @@ export function whatsappError(code: WhatsAppErrorCode) {
   };
   return new WhatsAppDeliveryError(code, messages[code]);
 }
+
+export function requireWhatsAppConfiguration<T>(load: () => T): T {
+  try {
+    return load();
+  } catch {
+    throw whatsappError('WHATSAPP_NOT_CONFIGURED');
+  }
+}
