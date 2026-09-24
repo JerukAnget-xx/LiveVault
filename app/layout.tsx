@@ -13,8 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Live.Vault | Select Recipient',
-  description: 'Select a recipient to upload or review a live income report.',
+  title: {
+    default: 'Live.Vault',
+    template: '%s | Live.Vault',
+  },
+  description: 'Admin workspace for live income report operations.',
 };
 
 export default function RootLayout({
@@ -23,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
