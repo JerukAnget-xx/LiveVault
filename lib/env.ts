@@ -3,11 +3,13 @@ import 'server-only';
 import {
   parseServerEnv,
   parseWhatsAppEnv,
+  parseWhatsAppWebhookEnv,
   type ServerEnv,
   type WhatsAppEnv,
+  type WhatsAppWebhookEnv,
 } from './env-schema';
 
-export type { ServerEnv, WhatsAppEnv } from './env-schema';
+export type { ServerEnv, WhatsAppEnv, WhatsAppWebhookEnv } from './env-schema';
 
 let cachedEnv: ServerEnv | undefined;
 
@@ -34,4 +36,8 @@ export function getReportStorageEnv() {
 
 export function getWhatsAppEnv(): WhatsAppEnv {
   return parseWhatsAppEnv(process.env);
+}
+
+export function getWhatsAppWebhookEnv(): WhatsAppWebhookEnv {
+  return parseWhatsAppWebhookEnv(process.env);
 }

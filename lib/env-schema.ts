@@ -38,14 +38,17 @@ const whatsappEnvSchema = z.object({
   WHATSAPP_PHONE_NUMBER_ID: z.string().regex(/^\d+$/u),
   WHATSAPP_BUSINESS_ACCOUNT_ID: z.string().regex(/^\d+$/u),
   WHATSAPP_TEMPLATE_NAME: z.string().regex(/^[a-z0-9_]+$/u),
-  WHATSAPP_TEMPLATE_LANGUAGE: z
-    .string()
-    .regex(/^[a-z]{2,3}(?:_[A-Z]{2})?$/u),
+  WHATSAPP_TEMPLATE_LANGUAGE: z.string().regex(/^[a-z]{2,3}(?:_[A-Z]{2})?$/u),
   WHATSAPP_GRAPH_VERSION: z.string().regex(/^v\d+\.\d+$/u),
+});
+
+const whatsappWebhookEnvSchema = z.object({
+  WHATSAPP_WEBHOOK_VERIFY_TOKEN: z.string().trim().min(16),
 });
 
 export type ServerEnv = z.infer<typeof coreServerEnvSchema>;
 export type WhatsAppEnv = z.infer<typeof whatsappEnvSchema>;
+export type WhatsAppWebhookEnv = z.infer<typeof whatsappWebhookEnvSchema>;
 
 type Environment = Record<string, string | undefined>;
 
@@ -68,6 +71,18 @@ export function parseWhatsAppEnv(environment: Environment): WhatsAppEnv {
 
   if (!result.success) {
     throw new Error('WhatsApp delivery is not configured.');
+  }
+
+  return result.data;
+}
+
+export function parseWhatsAppWebhookEnv(
+  environment: Environment,
+): WhatsAppWebhookEnv {
+  const result = whatsappWebhookEnvSchema.safeParse(environment);
+
+  if (!result.success) {
+    throw new Error('WhatsApp webhook verification is not configured.');
   }
 
   return result.data;

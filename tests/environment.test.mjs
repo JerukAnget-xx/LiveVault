@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   parseServerEnv,
   parseWhatsAppEnv,
+  parseWhatsAppWebhookEnv,
 } from '../lib/env-schema.ts';
 import {
   requireWhatsAppConfiguration,
@@ -70,8 +71,7 @@ test('complete WhatsApp configuration is accepted lazily', () => {
 
 test('missing WhatsApp configuration fails with the safe integration error', () => {
   assert.throws(
-    () =>
-      requireWhatsAppConfiguration(() => parseWhatsAppEnv(coreEnvironment)),
+    () => requireWhatsAppConfiguration(() => parseWhatsAppEnv(coreEnvironment)),
     (error) =>
       error instanceof WhatsAppDeliveryError &&
       error.code === 'WHATSAPP_NOT_CONFIGURED' &&
@@ -90,5 +90,18 @@ test('partial WhatsApp configuration also fails before an API request', () => {
     (error) =>
       error instanceof WhatsAppDeliveryError &&
       error.code === 'WHATSAPP_NOT_CONFIGURED',
+  );
+});
+
+test('WhatsApp webhook token is validated lazily and remains outside core env', () => {
+  const core = parseServerEnv(coreEnvironment);
+  assert.equal('WHATSAPP_WEBHOOK_VERIFY_TOKEN' in core, false);
+
+  assert.throws(() => parseWhatsAppWebhookEnv(coreEnvironment));
+  assert.deepEqual(
+    parseWhatsAppWebhookEnv({
+      WHATSAPP_WEBHOOK_VERIFY_TOKEN: 'local-webhook-verification-secret',
+    }),
+    { WHATSAPP_WEBHOOK_VERIFY_TOKEN: 'local-webhook-verification-secret' },
   );
 });
